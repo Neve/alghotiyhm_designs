@@ -23,8 +23,11 @@
 # Mongo Explorer plugin:
 .idea/mongoSettings.xml
 
-## File-based project format:
+# File-based project format:
 *.iws
+
+*.vscode
+.pytest_cache
 
 ## Plugin-specific files:
 
