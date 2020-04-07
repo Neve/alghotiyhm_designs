@@ -8,5 +8,19 @@ class Solution(object):
         primes = {2, 3, 5, 7, 11, 13, 17, 19}
         return sum(bin(x).count('1') in primes
                    for x in xrange(L, R+1))
-    countPrimeSetBits(10,15)
     
+    countPrimeSetBits(self,10,15)
+
+def is_prime_4(n):
+    if n <= 1:          # negative numbers, 0 or 1
+        return False
+    if n <= 3:          # 2 and 3
+        return True
+    if n % 2 == 0 or n % 3 == 0:
+        return False
+
+    for i in range(5, int(math.sqrt(n)) + 1, 2):
+        if n % i == 0:
+            return False
+
+    return True

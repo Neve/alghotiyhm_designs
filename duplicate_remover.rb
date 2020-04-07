@@ -12,26 +12,8 @@ def duplicate_remover (input_string)
     puts input_string
   end
 
-=begin
-  tail_count = 1
-  for i in 1 .. input_string.length-1
-    for j in 0 .. tail_count
-	  if input_string[i] == input_string[j]
-	    puts "#{input_string[i]} == #{input_string[j]}"
-		break
-	  end
-	  
-	  if j == tail_count 
-	   input_string[tail_count] = input_string[i]
-	   tail_count += 1
-	  end
 
-	end
-
-  end
-  input_string[tail_count] = "0"
-  puts input_string
-=end
 end
+
 
 duplicate_remover(given_string)
