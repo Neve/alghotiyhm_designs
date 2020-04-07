@@ -22,14 +22,14 @@ class Solution(object):
                
                return [num_set[target-num], num_index]
            num_set[num] = num_index
-       print num_set
+       print(num_set)
 
         
 nums =[2,5,5,11]
 target = 10
 sol = Solution()
 result = sol.twoSum(nums,target)
-print result
+print(result)
 
 '''
 Accepted
