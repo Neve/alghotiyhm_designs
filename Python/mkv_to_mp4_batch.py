@@ -124,16 +124,16 @@ def delete_zero_sized_mp4_present(mp4_movie_path):
 # running: ffmpeg -i /path_to_the_.mkv 
 # looking for "" Subtitle: subrip" markers in output, 
 # if we have found any  - using move_text instead of copy
-def detect_srt_subrip_subtitles(mkv_path, thread_counter):
+def detect_srt_subrip_subtitles(ffmpeg_bin_path, mkv_path, thread_counter):
   mkv_path = f"\"{mkv_path}\""
-  movie_data = subprocess.getoutput(f"/usr/local/bin/ffprobe {mkv_path} ")
-  print(f"  INFO: Thread {thread_counter} RUNNING /usr/local/bin/ffprobe {mkv_path} ") 
+  movie_data = subprocess.getoutput(f"{ffmpeg_bin_path}ffprobe {mkv_path} ")
+  print(f"  Thread {thread_counter} INFO:  RUNNING {ffmpeg_bin_path}ffprobe {mkv_path} ") 
   # print (f"  DEEBUG: {movie_data} \n ") 
   if (movie_data.find('subrip') != -1): 
-    print(f"  ATTENTION: Thread {thread_counter} {mkv_path} \n    'subrip' subtitles type detected! 'mov_text' option will be used") 
+    print(f"  Thread {thread_counter} ATTENTION:\n    {mkv_path} \n    'subrip' subtitles type detected! 'mov_text' option will be used") 
     return True
   else: 
-    print(f"  INFO: Thread {thread_counter} {mkv_path} \n    NOTE: Doesn't contain 'subrip' subtitles, 'copy' option will be used") 
+    print(f"  Thread {thread_counter} INFO:\n    {mkv_path} \n    NOTE: Doesn't contain 'subrip' subtitles, 'copy' option will be used") 
     return False
 
 
@@ -141,16 +141,16 @@ def detect_srt_subrip_subtitles(mkv_path, thread_counter):
 # Actual ffmpeg convert sequence
 # mkv_movie_path - string with a path to mkv movie
 # return : null (executes ffmpeg cmd)
-def ffmpeg_convert_to_mp4( mkv_movie_path, c_s_sub_convert_type, mp4_full_path, thread_counter = 0):
+def ffmpeg_convert_to_mp4(ffmpeg_bin_path, mkv_movie_path, c_s_sub_convert_type, mp4_full_path, thread_counter = 0):
   if mkv_movie_path == '':
-    print(f"  INFO: Thread {thread_counter}  Movie path is empty! exit!")
+    print(f"  Thread {thread_counter} INFO: Movie path is empty! exit!")
     exit()
 
-  print(f"  INFO: Thread {thread_counter} for {mkv_movie_path} is starting")
+  print(f"  Thread {thread_counter} INFO: for {mkv_movie_path} is starting")
 
   # Autodetecting srt presense if auto_detect option given
   if c_s_sub_convert_type == 'auto':
-    if detect_srt_subrip_subtitles(mkv_movie_path, thread_counter):
+    if detect_srt_subrip_subtitles(ffmpeg_bin_path, mkv_movie_path, thread_counter):
       sub_convert_type = 'mov_text'
     else:
       sub_convert_type = 'copy'
@@ -159,7 +159,7 @@ def ffmpeg_convert_to_mp4( mkv_movie_path, c_s_sub_convert_type, mp4_full_path, 
 
 
   cmd_options = [
-    'ffmpeg -i ', 
+    f"{ffmpeg_bin_path}ffmpeg -i ", 
     f"\"{mkv_movie_path}\"", 
     ' -map 0 -c copy -c:s ', 
     sub_convert_type, 
@@ -168,17 +168,17 @@ def ffmpeg_convert_to_mp4( mkv_movie_path, c_s_sub_convert_type, mp4_full_path, 
     f"\"{mp4_full_path}\""
   ]
   cmd = ''.join(cmd_options)
-  print(f"  INFO: Thread {thread_counter} Executing: \n    {cmd} \n\n")
+  print(f"  Thread {thread_counter} INFO: Executing: \n    {cmd} \n\n")
 
   
 
   movie_data = subprocess.getoutput(cmd)
-  print(f"  INFO: Thread {thread_counter} Output: \n {movie_data} \n")
+  print(f"  Thread {thread_counter} INFO: Output: \n {movie_data} \n")
   
 
  
  # Initializing threads, 
-def convert_with_threads(mkv_movies, user_subtitle_convert_type):
+def convert_with_threads(ffmpeg_bin_path, mkv_movies, user_subtitle_convert_type):
   thread_count = 0
 
   # Current approach 1 thread per movie, which could hurt you cpu ))
@@ -188,7 +188,7 @@ def convert_with_threads(mkv_movies, user_subtitle_convert_type):
     for mkv_movie in mkv_movies:
       mp4_movie_name = rename_mkv_file_to_mp4(mkv_movie)
       delete_zero_sized_mp4_present(mp4_movie_name)
-      executor.submit(ffmpeg_convert_to_mp4, mkv_movie, user_subtitle_convert_type, mp4_movie_name, thread_count)
+      executor.submit(ffmpeg_convert_to_mp4, ffmpeg_bin_path, mkv_movie, user_subtitle_convert_type, mp4_movie_name, thread_count)
       thread_count+=1
 
   # threads = list()
@@ -203,13 +203,14 @@ def convert_with_threads(mkv_movies, user_subtitle_convert_type):
 
 # main part 
 def main():
+  ffmpeg_bin_path = "/usr/local/bin/"
   path_to_convert = get_movie_path(sys.argv)
   mkv_movie_list = get_movie_list(path_to_convert)
   get_user_grant_to_run()
   user_subtitle_convert_type = ask_user_about_sub_convert_type()
 
   start_time = time.process_time()
-  convert_with_threads(mkv_movie_list, user_subtitle_convert_type) 
+  convert_with_threads(ffmpeg_bin_path, ffmpeg_bin_path, mkv_movie_list, user_subtitle_convert_type) 
   elapsed_time = time.process_time() - start_time 
   print(f"  INFO: Conversion time: {elapsed_time}")
 
