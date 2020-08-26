@@ -48,7 +48,7 @@ def get_movie_list(path_to_convert):
       directories
 
       for file in files:
-        if file.endswith(".mkv") or file.endswith(".avi
+        if file.endswith(".mkv") or file.endswith(".avi"):
           # Full path to mkv
           mkv_full_path = os.path.join(root, file)
           # appending to main list
@@ -183,7 +183,8 @@ def convert_with_threads(ffmpeg_bin_path, mkv_movies, user_subtitle_convert_type
 
   # Current approach 1 thread per movie, which could hurt you cpu ))
   # Creating a number of threads equal to number of movies found
-  mkv_number = int(mkv_movies.count)
+  # mkv_number = int(mkv_movies.count)
+  mkv_number = 21
   with concurrent.futures.ThreadPoolExecutor(max_workers = mkv_number) as executor:
     for mkv_movie in mkv_movies:
       mp4_movie_name = rename_mkv_file_to_mp4(mkv_movie)
@@ -203,14 +204,14 @@ def convert_with_threads(ffmpeg_bin_path, mkv_movies, user_subtitle_convert_type
 
 # main part 
 def main():
-  ffmpeg_bin_path = "/usr/local/bin/"
+  ffmpeg_bin_path = "/usr/bin/"
   path_to_convert = get_movie_path(sys.argv)
   mkv_movie_list = get_movie_list(path_to_convert)
   get_user_grant_to_run()
   user_subtitle_convert_type = ask_user_about_sub_convert_type()
 
   start_time = time.process_time()
-  convert_with_threads(ffmpeg_bin_path, ffmpeg_bin_path, mkv_movie_list, user_subtitle_convert_type) 
+  convert_with_threads(ffmpeg_bin_path, mkv_movie_list, user_subtitle_convert_type) 
   elapsed_time = time.process_time() - start_time 
   print(f"  INFO: Conversion time: {elapsed_time}")
 
