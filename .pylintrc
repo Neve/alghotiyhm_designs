@@ -1,0 +1,15 @@
+# https://www.codeac.io/documentation/pylint-configuration.html
+
+[MASTER]
+disable=
+    C0116, # missing-method-docstring
+
+
+[FORMAT]
+indent-string='  '
+
+# Number of spaces of indent required inside a hanging  or continued line.
+indent-after-paren=3
+
+# Maximum number of characters on a single line.
+max-line-length=120
